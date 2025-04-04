@@ -11,7 +11,7 @@ terraform {
     key            = "tf-state-setup"
     region         = "us-east-1"
     encrypt        = true
-    #dynamodb_table = "devops-recipe-app-api-tf-lock-new"
+    
   }
 }
 
