@@ -53,8 +53,8 @@ resource "aws_ecs_task_definition" "api" {
   execution_role_arn       = aws_iam_role.task_execution_role.arn
   task_role_arn            = aws_iam_role.app_task.arn
 
-   container_definitions = jsonencode(
-    [
+container_definitions = jsonencode(
+  [
        {
          name              = "api"
          image             = var.ecr_app_image
@@ -65,6 +65,7 @@ resource "aws_ecs_task_definition" "api" {
           {
              name  = "DJANGO_SECRET_KEY"
              value = var.django_secret_key
+             
           },
           {
              name  = "DB_HOST"
