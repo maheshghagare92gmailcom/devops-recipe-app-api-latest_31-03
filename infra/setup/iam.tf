@@ -171,7 +171,10 @@ data "aws_iam_policy_document" "rds" {
       "rds:ListTagsForResource",
       "rds:AddTagsToResource",
       "rds:ModifyDBInstance",
-      "ec2:DescribeAvailabilityZones"
+      "ec2:DescribeAvailabilityZones",
+      "ec2:DescribeVpcs",
+      "ec2:DescribeSubnets"
+
 
     ]
     resources = ["*"]
