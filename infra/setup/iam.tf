@@ -173,7 +173,8 @@ data "aws_iam_policy_document" "rds" {
       "rds:ModifyDBInstance",
       "ec2:DescribeAvailabilityZones",
       "ec2:DescribeVpcs",
-      "ec2:DescribeSubnets"
+      "ec2:DescribeSubnets",
+      "iam:DeleteServiceLinkedRole"
 
 
     ]
@@ -275,7 +276,9 @@ data "aws_iam_policy_document" "iam" {
       "iam:AttachRolePolicy",
       "iam:TagRole",
       "iam:TagPolicy",
-      "iam:PassRole"
+      "iam:PassRole",
+      "iam:DeleteServiceLinkedRole",
+      "iam:GetServiceLinkedRoleDeletionStatus"
     ]
     resources = ["*"]
   }
