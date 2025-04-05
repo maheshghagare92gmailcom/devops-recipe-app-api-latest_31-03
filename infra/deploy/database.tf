@@ -23,18 +23,25 @@ resource "aws_security_group" "rds" {
     protocol  = "tcp"
     from_port = 5432
     to_port   = 5432
-
-    /* 
-    security_groups = [
-      aws_security_group.ecs_service.id
-    ]
-    */ 
   }
 
   tags = {
     Name = "${local.prefix}-db-security-group"
   }
 }
+
+
+
+resource "aws_iam_service_linked_role" "rds" {
+  aws_service_name = "rds.amazonaws.com"
+}
+
+resource "time_sleep" "wait_10_seconds" {
+  depends_on      = [aws_iam_service_linked_role.rds]
+  create_duration = "10s"
+}
+
+
 
 resource "aws_db_instance" "main" {
   identifier                 = "${local.prefix}-db"
@@ -52,6 +59,10 @@ resource "aws_db_instance" "main" {
   multi_az                   = false
   backup_retention_period    = 0
   vpc_security_group_ids     = [aws_security_group.rds.id]
+  depends_on = [
+    aws_iam_service_linked_role.rds,
+    time_sleep.wait_10_seconds
+  ]
 
   tags = {
     Name = "${local.prefix}-main"
