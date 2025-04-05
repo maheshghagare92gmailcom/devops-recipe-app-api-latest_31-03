@@ -181,8 +181,8 @@ resource "aws_security_group" "ecs_service" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
 }
+
 resource "aws_ecs_service" "api" {
   name                   = "${local.prefix}-api"
   cluster                = aws_ecs_cluster.main.name
@@ -202,4 +202,8 @@ resource "aws_ecs_service" "api" {
 
     security_groups = [aws_security_group.ecs_service.id]
   }
+}
+
+resource "aws_iam_service_linked_role" "ecs" {
+  aws_service_name = "ecs.amazonaws.com"
 }
