@@ -90,10 +90,7 @@ resource "aws_iam_user_policy_attachment" "ecr" {
   policy_arn = aws_iam_policy.ecr.arn
 }
 
-resource "aws_iam_user_policy_attachment" "admin_access" {
-  user       = aws_iam_user.cd.name
-  policy_arn = "arn:aws:iam::aws:policy/AdministratorAccess"
-}
+
 
 #########################
 # Policy for EC2 access #
