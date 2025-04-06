@@ -413,7 +413,6 @@ data "aws_iam_policy_document" "route53" {
     effect = "Allow"
     actions = [
       "route53:ListHostedZones",
-      "route53:ListHostedZones",
       "route53:ChangeTagsForResource",
       "route53:GetHostedZone",
       "route53:ListTagsForResource",
@@ -438,7 +437,19 @@ resource "aws_iam_policy" "route53" {
   policy      = data.aws_iam_policy_document.route53.json
 }
 
-resource "aws_iam_user_policy_attachment" "route53" {
-  user       = aws_iam_user.cd.name
+
+
+
+resource "aws_iam_group" "cd_group" {
+  name = "${aws_iam_user.cd.name}-cd-group"
+}
+
+resource "aws_iam_user_group_membership" "cd_user_group" {
+  user = "recipe-app-api-cd"
+  groups = [aws_iam_group.cd_group.name]
+}
+
+resource "aws_iam_group_policy_attachment" "route53" {
+  group      = aws_iam_group.cd_group.name
   policy_arn = aws_iam_policy.route53.arn
 }
