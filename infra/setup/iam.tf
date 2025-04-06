@@ -425,7 +425,8 @@ data "aws_iam_policy_document" "route53" {
       "acm:DescribeCertificate",
       "acm:ListTagsForCertificate",
       "acm:DeleteCertificate",
-      "acm:CreateCertificate"
+      "acm:CreateCertificate",
+      "route53:ListHostedZones"
     ]
     resources = ["*"]
   }
