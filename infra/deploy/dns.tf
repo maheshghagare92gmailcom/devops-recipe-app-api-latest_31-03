@@ -1,4 +1,4 @@
-data "aws_route53_zone" "zone" {
+resource "aws_route53_zone" "zone" {
   name = "${var.dns_zone_name}."
 }
 
