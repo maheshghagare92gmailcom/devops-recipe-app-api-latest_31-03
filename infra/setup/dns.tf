@@ -8,7 +8,7 @@ resource "aws_route53_record" "app" {
   type    = "CNAME"
   ttl     = "300"
 
-  records = [aws_lb.api.dns_name]
+records = [aws_lb.api.dns_name]
 }
 
 resource "aws_acm_certificate" "cert" {
