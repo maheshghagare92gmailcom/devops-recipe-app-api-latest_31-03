@@ -52,10 +52,10 @@ resource "aws_ecs_task_definition" "api" {
   memory                   = 512
   execution_role_arn       = aws_iam_role.task_execution_role.arn
   task_role_arn            = aws_iam_role.app_task.arn
-  
+
   container_definitions = jsonencode(
     [
-      {
+       {
         name              = "api"
         image             = var.ecr_app_image
         essential         = true
@@ -84,7 +84,7 @@ resource "aws_ecs_task_definition" "api" {
           },
           {
             name  = "ALLOWED_HOSTS"
-            value = "*"
+            value = aws_route53_record.app.fqdn
           }
         ]
         mountPoints = [
@@ -92,11 +92,11 @@ resource "aws_ecs_task_definition" "api" {
             readOnly      = false
             containerPath = "/vol/web/static"
             sourceVolume  = "static"
-           },
+             },
           {
             readOnly      = false
             containerPath = "/vol/web/media"
-            sourceVolume  = "efs-media"  
+            sourceVolume  = "efs-media"
           }
         ],
         logConfiguration = {
@@ -107,7 +107,7 @@ resource "aws_ecs_task_definition" "api" {
             awslogs-stream-prefix = "api"
           }
         }
-      },
+      },  
       {
         name              = "proxy"
         image             = var.ecr_proxy_image
@@ -131,7 +131,7 @@ resource "aws_ecs_task_definition" "api" {
             readOnly      = true
             containerPath = "/vol/static"
             sourceVolume  = "static"
-             },
+           },
           {
             readOnly      = true
             containerPath = "/vol/media"
@@ -149,9 +149,11 @@ resource "aws_ecs_task_definition" "api" {
       }
     ]
   )
+
   volume {
     name = "static"
   }
+
   volume {
     name = "efs-media"
     efs_volume_configuration {
@@ -164,15 +166,18 @@ resource "aws_ecs_task_definition" "api" {
       }
     }
   }
+
   runtime_platform {
     operating_system_family = "LINUX"
     cpu_architecture        = "X86_64"
   }
 }
+
 resource "aws_security_group" "ecs_service" {
   description = "Access rules for the ECS service."
   name        = "${local.prefix}-ecs-service"
   vpc_id      = aws_vpc.main.id
+
   # Outbound access to endpoints
   egress {
     from_port   = 443
@@ -180,6 +185,7 @@ resource "aws_security_group" "ecs_service" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
   # RDS connectivity
   egress {
     from_port = 5432
@@ -190,7 +196,7 @@ resource "aws_security_group" "ecs_service" {
       aws_subnet.private_b.cidr_block,
     ]
   }
-
+  
    # NFS Port for EFS volumes
   egress {
     from_port = 2049
@@ -223,8 +229,6 @@ resource "aws_ecs_service" "api" {
   enable_execute_command = true
 
   network_configuration {
-   
-
     subnets = [
       aws_subnet.private_a.id,
       aws_subnet.private_b.id
@@ -233,9 +237,13 @@ resource "aws_ecs_service" "api" {
     security_groups = [aws_security_group.ecs_service.id]
   }
 
-   load_balancer {
+  load_balancer {
     target_group_arn = aws_lb_target_group.api.arn
     container_name   = "proxy"
     container_port   = 8000
   }
+}
+
+resource "aws_iam_service_linked_role" "ecs" {
+  aws_service_name = "ecs.amazonaws.com"
 }
