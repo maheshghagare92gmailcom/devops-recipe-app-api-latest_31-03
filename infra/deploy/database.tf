@@ -57,10 +57,7 @@ resource "aws_db_instance" "main" {
   multi_az                   = false
   backup_retention_period    = 0
   vpc_security_group_ids     = [aws_security_group.rds.id]
-  depends_on = [
-    aws_iam_service_linked_role.rds,
-    time_sleep.wait_10_seconds
-  ]
+  
 
   tags = {
     Name = "${local.prefix}-main"
