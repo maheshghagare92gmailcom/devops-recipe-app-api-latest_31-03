@@ -35,9 +35,7 @@ resource "aws_security_group" "rds" {
 
 
 
-resource "aws_iam_service_linked_role" "rds" {
-  aws_service_name = "rds.amazonaws.com"
-}
+
 
 resource "time_sleep" "wait_10_seconds" {
   depends_on      = [aws_iam_service_linked_role.rds]
