@@ -149,9 +149,11 @@ resource "aws_ecs_task_definition" "api" {
       }
     ]
   )
+
   volume {
     name = "static"
   }
+
   volume {
     name = "efs-media"
     efs_volume_configuration {
@@ -164,15 +166,18 @@ resource "aws_ecs_task_definition" "api" {
       }
     }
   }
+
   runtime_platform {
     operating_system_family = "LINUX"
     cpu_architecture        = "X86_64"
   }
 }
+
 resource "aws_security_group" "ecs_service" {
   description = "Access rules for the ECS service."
   name        = "${local.prefix}-ecs-service"
   vpc_id      = aws_vpc.main.id
+
   # Outbound access to endpoints
   egress {
     from_port   = 443
@@ -180,6 +185,7 @@ resource "aws_security_group" "ecs_service" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
+
   # RDS connectivity
   egress {
     from_port = 5432
@@ -223,8 +229,6 @@ resource "aws_ecs_service" "api" {
   enable_execute_command = true
 
   network_configuration {
-   
-
     subnets = [
       aws_subnet.private_a.id,
       aws_subnet.private_b.id
