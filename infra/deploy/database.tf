@@ -37,10 +37,7 @@ resource "aws_security_group" "rds" {
 
 
 
-resource "time_sleep" "wait_10_seconds" {
-  depends_on      = [aws_iam_service_linked_role.rds]
-  create_duration = "10s"
-}
+
 
 
 
